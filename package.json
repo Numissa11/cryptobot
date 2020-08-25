@@ -1,0 +1,29 @@
+{
+  "name": "cryptobot",
+  "version": "1.0.0",
+  "description": "crypto trading bot",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Numissa11/cryptobot.git"
+  },
+  "keywords": [
+    "crypto"
+  ],
+  "author": "Aline Sinclaire",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Numissa11/cryptobot/issues"
+  },
+  "homepage": "https://github.com/Numissa11/cryptobot#readme",
+  "scripts": {
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "start": "npm run dev"
+  },
+  "devDependencies": {
+
+  },
+  "dependencies": {
+
+  }
+}
