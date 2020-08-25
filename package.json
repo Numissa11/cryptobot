@@ -19,7 +19,9 @@
   "scripts": {
     "allahakbar": "nodemon app.js"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "knex": "^0.21.5"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "mysql": "^2.18.1",
