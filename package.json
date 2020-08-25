@@ -17,13 +17,12 @@
   },
   "homepage": "https://github.com/Numissa11/cryptobot#readme",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev"
+    "allahakbar": "nodemon app.js"
   },
-  "devDependencies": {
-
-  },
+  "devDependencies": {},
   "dependencies": {
-
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.4"
   }
 }
