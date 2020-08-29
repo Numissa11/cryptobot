@@ -3,7 +3,7 @@ exports.up = function (knex) {
     t.increments("id").unsigned().primary();
     t.string("open");
     t.string("high");
-    t.string("close");
+    t.string("last");
     t.string("low");
     t.string("timestamp");
   });
