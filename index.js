@@ -3,6 +3,7 @@ const connection = require('./config')
 const app = express()
 const port = process.env.PORT || 3000;
 var fetch = require('node-fetch')
+var cron = require('node-cron');
 
 app.use(express.json())
 
@@ -10,9 +11,10 @@ function ooIfoundData(){
     fetch('https://www.bitstamp.net/api/v2/ticker/btceur')
   .then(response => response.json())
   .then(data => {  
-    console.log(data)
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxx', data)
 
-    const timestamp = data.timestamp
+    const timestamp = (data.timestamp)
+    //const timestamp2 = parseFloat(timestamp)
     console.log("timestamp :", timestamp)
 
     const open = data.open
@@ -28,41 +30,25 @@ function ooIfoundData(){
     console.log("low :", low)
 
     //on doit changer les valeurs pour des numéros dans le knex à mon avis et il faut qu'il reconnaisse que c'est bien ls bonns valeurs
-    
-    connection.query(`INSERT INTO ohcl_btc_usd (open, high, close, low, timestamp) VALUES ('open', 'high', 'last', 'low', 'timestamp')`),
+    const query = `INSERT INTO ohcl_btc_usd (open, high, last, low, timestamp) VALUES ('${open}', '${high}', '${last}', '${low}', '${timestamp}')`
+    console.log('query', query)
+    connection.query(query),
     (err, res) => {
         if (err)
           console.log('error1', err);
         }
     })}
 
-  /* router.post('/signup', function(req, res, next) {
-  const { email, name, lastname , password} = req.body;
   
-  
-  const formData = [email, hash, name, lastname];
-  connection.query( 'INSERT INTO users (email, password, name, lastname) VALUES (?, ?, ?, ?)', formData, (err, results) => {
-    if (err)
-      res.status(500).json({ flash:  err.message });
-    else
-      res.status(200).json({ flash:  "User has been signed up!" });
-    });
-});*/
-
-ooIfoundData();
+ // cron.schedule('*/1 * * * *', ooIfoundData());
 
 
+ cron.schedule('*/1 * * * *', () => {
+    ooIfoundData()
+    console.log('running a task every minute');
+  });
 
 
-/*con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    var sql = "INSERT INTO cryptodb (open) VALUES (data.open)";
-    con.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log("1 record inserted");
-    });
-  });*/
 
 connection.connect((err) => {
       if (err) throw err;
