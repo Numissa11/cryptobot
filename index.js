@@ -11,10 +11,9 @@ function ooIfoundData(){
     fetch('https://www.bitstamp.net/api/v2/ticker/btceur')
   .then(response => response.json())
   .then(data => {  
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxx', data)
+    console.log(data)
 
     const timestamp = (data.timestamp)
-    //const timestamp2 = parseFloat(timestamp)
     console.log("timestamp :", timestamp)
 
     const open = data.open
