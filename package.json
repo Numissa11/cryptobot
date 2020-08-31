@@ -29,6 +29,7 @@
     "mysql": "^2.18.1",
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.0",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "tulind": "^0.8.18"
   }
 }
