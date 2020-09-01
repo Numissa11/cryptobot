@@ -7,6 +7,12 @@ var cron = require('node-cron');
 
 app.use(express.json())
 
+
+connection.connect((err) => {
+    if (err) throw err;
+    console.log('database successfully connected')
+})
+
 function ooIfoundData() {
     fetch('https://www.bitstamp.net/api/v2/ticker/btceur')
         .then(response => response.json())
@@ -34,34 +40,30 @@ function ooIfoundData() {
                 (err, res) => {
                     if (err)
                         console.log('error1', err);
-                    
-                }            
+
+                }
         })
 
-        .then(function(req, res, next) {
-            connection.query('SELECT * FROM ohcl_btc_usd limit 7,10', (err, results) => {
-              if (err)
-                console.log(err)
-              else
-                console.log(results);
-              });
-          });
+        .then(function (req, res) {
+            connection.query('SELECT COUNT (*) FROM ohcl_btc_usd', (err, results) => {
+                if (err)
+                    console.log(err)
+                else
+                    console.log(results);
+                return results
+            });
+           
+        });
+
+
+
+
+
+
 }
 
 
 
-
-
-   /* connection.query("SELECT * FROM ohcl_btc_usd", function (err, result) {
-        if (err) throw err;
-        console.log(result);
-    });
-*/
-
-
-
-
-// cron.schedule('*/1 * * * *', ooIfoundData());
 
 
 cron.schedule('*/1 * * * *', () => {
@@ -71,10 +73,6 @@ cron.schedule('*/1 * * * *', () => {
 
 
 
-connection.connect((err) => {
-    if (err) throw err;
-    console.log('database successfully connected')
-})
 
 
 
