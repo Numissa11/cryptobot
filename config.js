@@ -6,4 +6,4 @@ user :  'user', // le nom d'utilisateur
 password :  'matu2010', // le mot de passe
 database :  'cryptodb', // le nom de la base de données
 });
-module.exports = connection;
+module.exports = connection
