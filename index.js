@@ -2,8 +2,9 @@ const express = require('express');
 const connection = require('./config')
 const app = express()
 const port = process.env.PORT || 3000;
-var fetch = require('node-fetch')
-var cron = require('node-cron');
+const fetch = require('node-fetch')
+const cron = require('node-cron');
+
 
 app.use(express.json())
 
@@ -45,11 +46,13 @@ function ooIfoundData() {
         })
 
         .then(function (req, res) {
-            connection.query('SELECT COUNT (*) FROM ohcl_btc_usd', (err, results) => {
+            connection.query('SELECT COUNT (*) FROM ohcl_btc_usd',(err, results) => {
                 if (err)
                     console.log(err)
                 else
                     console.log(results);
+                    const total = results;
+                    console.log("total :", total) 
                 return results
             });
            
