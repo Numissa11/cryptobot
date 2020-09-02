@@ -49,25 +49,28 @@ async function ooIfoundData() {
         // COUNT total id in the DB
         const resCount = await db.queryAsync('SELECT COUNT (*) FROM ohcl_btc_usd')
         total1 = resCount
+
         const string = JSON.stringify(total1);
         const json =  JSON.parse(string);
         const numberTotal = json[0]['COUNT (*)']
         const numberTen = numberTotal - 10;
-        const numberFor = 4;
+        const numberFor = 2;
 
 
         // SELECT last 10 from
         query2 = `SELECT * from ohcl_btc_usd limit ${numberTen}, ${numberFor}`
         const limit = await db.queryAsync(query2)
 
+        const limitString = JSON.stringify(limit)
+        const limitJson = JSON.parse(limitString)
+      
+
         // console.log(results)
-        console.log('insert', insert)
         console.log('total1', total1)
         console.log('limit', limit)
-        console.log('string', string)
-        console.log('json', json)
         console.log('count: ', numberTotal)
         console.log('count -10:', numberTen)
+        console.log('limit Json', limitJson)
 
 
     } catch (error) {
