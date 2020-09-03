@@ -5,10 +5,14 @@ const port = process.env.PORT || 3000;
 const fetch = require('node-fetch')
 const cron = require('node-cron');
 const Bluebird = require('bluebird')
+var tulind = require('tulind');
+
+// Tulip indicators console
+console.log("Tulip Indicators version is:");
+console.log(tulind.version);
 
 let total1 = 0
 
-let total2 = 0
 
 app.use(express.json())
 
@@ -54,15 +58,23 @@ async function ooIfoundData() {
         const json =  JSON.parse(string);
         const numberTotal = json[0]['COUNT (*)']
         const numberTen = numberTotal - 10;
-        const numberFor = 2;
+        const numberLimit = 2;
 
 
         // SELECT last 10 from
-        query2 = `SELECT * from ohcl_btc_usd limit ${numberTen}, ${numberFor}`
+        query2 = `SELECT * from ohcl_btc_usd limit ${numberTen}, ${numberLimit}`
         const limit = await db.queryAsync(query2)
 
         const limitString = JSON.stringify(limit)
-        const limitJson = JSON.parse(limitString)
+        const dataJson = JSON.parse(limitString)
+
+        const openArray = dataJson.map((elem) => elem.open)
+        const highArray = dataJson.map((elem) => elem.high)
+        const lastArray = dataJson.map((elem) => elem.last)
+        const lowArray = dataJson.map((elem) => elem.low)
+        const timeArray = dataJson.map((elem) => elem.timestamp)
+
+
       
 
         // console.log(results)
@@ -70,7 +82,13 @@ async function ooIfoundData() {
         console.log('limit', limit)
         console.log('count: ', numberTotal)
         console.log('count -10:', numberTen)
-        console.log('limit Json', limitJson)
+        console.log('data Json', dataJson)
+        console.log('open Array', openArray)
+        console.log('high Array', highArray)
+        console.log('last Array', lastArray)
+        console.log('low Array', lowArray)
+        console.log('time Array', timeArray)
+
 
 
     } catch (error) {
@@ -80,17 +98,10 @@ async function ooIfoundData() {
 
 
 
-
-
-
 cron.schedule('*/1 * * * *', async () => {
     await ooIfoundData()
     console.log('running a task every minute');
 });
-
-
-
-
 
 
 
