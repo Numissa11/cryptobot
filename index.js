@@ -1,18 +1,24 @@
 const express = require('express');
 const connection = require('./config')
 const app = express()
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const fetch = require('node-fetch')
 const cron = require('node-cron');
 const Bluebird = require('bluebird')
 var tulind = require('tulind');
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  })
 
 // Tulip indicators console
 console.log("Tulip Indicators version is:");
 console.log(tulind.version);
 
 let total1 = 0
-let dbResponse = 0
+let freshData = 0
 
 
 
@@ -69,7 +75,7 @@ async function ooIfoundData() {
 
         const limitString = JSON.stringify(limit)
         let dataJson = JSON.parse(limitString)
-        dbResponse = dataJson
+        freshData = dataJson
 
         const openArray = dataJson.map((elem) => elem.open)
         const highArray = dataJson.map((elem) => elem.high)
@@ -104,14 +110,16 @@ async function ooIfoundData() {
 }
 
 
-// all indicators are consol.log
+// all indicators are console.log
 
-console.log(tulind.indicators);
+console.log('indicators', tulind.indicators);
+
+const req = { body: { }}     
+            
 
 app.get('/tradingData', (req, res) => {
 
-
-    res.json(dbResponse)
+    res.json(freshData)
 })
 
 
@@ -119,7 +127,6 @@ cron.schedule('*/1 * * * *', async () => {
     await ooIfoundData()
     console.log('running a task every minute');
 });
-
 
 
 
