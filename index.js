@@ -74,7 +74,11 @@ async function ooIfoundData() {
         const lowArray = dataJson.map((elem) => elem.low)
         const timeArray = dataJson.map((elem) => elem.timestamp)
 
-
+//Do a simple moving average on close prices with period of 3.
+tulind.indicators.sma.indicator([lastArray], [2], function(err, results) {
+    console.log("Result of sma is:");
+    console.log(results[0]);
+  });
       
 
         // console.log(results)
