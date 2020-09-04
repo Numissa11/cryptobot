@@ -12,6 +12,8 @@ console.log("Tulip Indicators version is:");
 console.log(tulind.version);
 
 let total1 = 0
+let dbResponse = 0
+
 
 
 app.use(express.json())
@@ -55,7 +57,7 @@ async function ooIfoundData() {
         total1 = resCount
 
         const string = JSON.stringify(total1);
-        const json =  JSON.parse(string);
+        const json = JSON.parse(string);
         const numberTotal = json[0]['COUNT (*)']
         const numberTen = numberTotal - 10;
         const numberLimit = 2;
@@ -66,7 +68,8 @@ async function ooIfoundData() {
         const limit = await db.queryAsync(query2)
 
         const limitString = JSON.stringify(limit)
-        const dataJson = JSON.parse(limitString)
+        let dataJson = JSON.parse(limitString)
+        dbResponse = dataJson
 
         const openArray = dataJson.map((elem) => elem.open)
         const highArray = dataJson.map((elem) => elem.high)
@@ -74,12 +77,12 @@ async function ooIfoundData() {
         const lowArray = dataJson.map((elem) => elem.low)
         const timeArray = dataJson.map((elem) => elem.timestamp)
 
-//Do a simple moving average on close prices with period of 3.
-tulind.indicators.sma.indicator([lastArray], [2], function(err, results) {
-    console.log("Result of sma is:");
-    console.log(results[0]);
-  });
-      
+        //Do a simple moving average on close prices with period of 3.
+        tulind.indicators.sma.indicator([lastArray], [2], function (err, results) {
+            console.log("Result of sma is:");
+            console.log(results[0]);
+        });
+
 
         // console.log(results)
         console.log('total1', total1)
@@ -100,6 +103,16 @@ tulind.indicators.sma.indicator([lastArray], [2], function(err, results) {
     }
 }
 
+
+// all indicators are consol.log
+
+console.log(tulind.indicators);
+
+app.get('/tradingData', (req, res) => {
+
+
+    res.json(dbResponse)
+})
 
 
 cron.schedule('*/1 * * * *', async () => {
