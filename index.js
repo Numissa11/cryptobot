@@ -66,7 +66,7 @@ async function ooIfoundData() {
         const json = JSON.parse(string);
         const numberTotal = json[0]['COUNT (*)']
         const numberTen = numberTotal - 10;
-        const numberLimit = 2;
+        const numberLimit = 10;
 
 
         // SELECT last 10 from

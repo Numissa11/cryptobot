@@ -26,7 +26,7 @@ class FreshData extends Component {
                   // faut faire un autre '.then' et ca, ca nous donne nos data du back end, on va l'appeler freshData
                   // on doit mnt le mettre dans le state, donc on va faire un .setState,
                   // donc le freshData c'est notre réponse qui vient du back et on décide de l'appeler freshData
-                  // va devenir le freshData du State (freshData : freshData) avec ES6 ca serait just (freshData)
+                  // va devenir le freshData du State (freshData : freshData) avec ES6 ca serait just (freshData) (c'est le cas en fait ici)
                   // dans freshData, on peut mettre un callBack dans le setState et on console.log les data fetched
                  
       }
