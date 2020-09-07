@@ -38,6 +38,15 @@ class FreshData extends Component {
 
                   <div className="App" >
                         <h2> FreshData </h2>
+            <ul>
+                  {this.state.freshData.map(singleData =>
+                      <li key={singleData.id}> open: {singleData.open} high: {singleData.high} last: {singleData.last} low: {singleData.low} time: {singleData.timestamp}</li>  
+                       
+
+                        )}
+            </ul>
+           
+
                   </div>
             )
       }
