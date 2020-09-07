@@ -12,3 +12,9 @@ li {
       line-height: 2rem;
       border-bottom: 1pc dotted #777
 }
+
+.App {
+      color: lightseagreen;
+      font-weight: bold;
+      font-size: larger;
+}
