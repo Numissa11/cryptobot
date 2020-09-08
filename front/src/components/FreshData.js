@@ -18,7 +18,7 @@ class FreshData extends Component {
       componentDidMount() {
 
        
-            fetch('http://localhost:3001/tradingData')
+            fetch('http://localhost:5000/tradingData')
             .then(res => res.json())
             .then(freshData => this.setState({ freshData }, () => console.log('Fresh data fetched..', freshData)))
 
