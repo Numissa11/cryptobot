@@ -1,7 +1,7 @@
 const express = require('express');
 const connection = require('./config')
 const app = express()
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 5000;
 const fetch = require('node-fetch')
 const cron = require('node-cron');
 const Bluebird = require('bluebird')
