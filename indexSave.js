@@ -1,4 +1,4 @@
-const express = require('express');
+/*const express = require('express');
 const connection = require('./config')
 const app = express()
 const port = process.env.PORT || 5000;
@@ -7,13 +7,21 @@ const cron = require('node-cron');
 const Bluebird = require('bluebird')
 var tulind = require('tulind');
 
-app.use(express.json())
-
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   })
+
+// Tulip indicators console
+console.log("Tulip Indicators version is:");
+console.log(tulind.version);
+
+let freshData = 0
+
+
+
+app.use(express.json())
 
 global.db = Bluebird.promisifyAll(connection);
 
@@ -21,16 +29,6 @@ connection.connect((err) => {
     if (err) throw err;
     console.log('database successfully connected')
 })
-
-// Tulip indicators console
-console.log("Tulip Indicators version is:");
-console.log(tulind.version);
-
-
-// ***** C. O. D. E ****** //
-
-let freshData = 0
-
 
 async function ooIfoundData() {
     try {
@@ -127,7 +125,9 @@ app.get('/tradingData', (req, res) => {
 })
 
 
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/
+/*
+1 * * * *', async () => {
     await ooIfoundData()
     console.log('running a task every minute');
 });
@@ -135,3 +135,23 @@ cron.schedule('*/1 * * * *', async () => {
 
 
 app.listen(port, () => console.log(`Listening on port ${port}...`))
+
+
+
+
+exports.up = function (knex) {
+      return knex.schema.createTable("ohcl_btc_usd", function (table) {
+        table.increments("id").unsigned().primary();
+        table.decimal('open', 8, 2);
+        table.decimal("high", 8, 2);
+        table.decimal("last", 8, 2);
+        table.decimal("low", 8, 2);
+        table.decimal("timestamp", 13, 0);
+      });
+    };
+    
+    exports.down = function(knex) {
+          return knex.schema
+              .dropTable("ohcl_btc_usd")
+        };
+    
