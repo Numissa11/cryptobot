@@ -154,4 +154,29 @@ exports.up = function (knex) {
           return knex.schema
               .dropTable("ohcl_btc_usd")
         };
+
+        exports.up = function (knex) {
+      return knex.schema.createTable("ohcl_macd_bband", function (table) {
+        table.increments("id").unsigned().primary();
+        table.decimal('open', 5, 7);
+        table.decimal("high", 5, 7);
+        table.decimal("close", 5, 7);
+        table.decimal("low", 5, 7);
+        table.decimal("timestamp", 13, 0);
+        table.decimal("macd", 5, 7);
+        table.decimal("macd_signal", 5, 7);
+        table.decimal("macd_histogram", 5, 7);
+        table.decimal("bband_lower", 5, 7);
+        table.decimal("bband_middle", 5, 7);
+        table.decimal("bband_upper", 5, 7);
+
+
+      });
+    };
+    
+    exports.down = function(knex) {
+          return knex.schema
+              .dropTable("ohcl_macd_bband")
+        };
+    */
     
