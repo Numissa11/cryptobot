@@ -33,7 +33,7 @@ console.log(tulind.version);
 async function ooIfoundData() {
     try {
 
-        const fetchedData = await fetch('https://www.bitstamp.net/api/v2/ohlc/btcusd?step=60&limit=27')
+        const fetchedData = await fetch('https://www.bitstamp.net/api/v2/ohlc/btcusd?step=60&limit=10')
 
         let data = await fetchedData.json()
 
@@ -51,9 +51,14 @@ async function ooIfoundData() {
 
         // Tulind indicators calculations macd & bolinger
 
-        const macd = await tulind.indicators.macd.indicator([openArray], [12, 26, 9])
+        const macd = await tulind.indicators.macd.indicator([openArray], [2, 5, 9])
 
         console.log('macd', macd)
+
+
+        const bband = await tulind.indicators.bbands.indicator([openArray], [5, 2])
+
+        console.log('bband', bband)
 
 
 
@@ -94,6 +99,9 @@ async function ooIfoundData() {
         console.log('parseLow', parseLow);
 
         // INSERT fetched data into DB
+
+        //NOT Ready yet, need the indicators!
+        
         const query = `INSERT INTO ohcl_macd_bband (open, high, close, low, timestamp, macd, macd_signal, macd_histogram, bband_lower, bband_middle, bband_upper) VALUES ('${parseOpen}', '${parseHigh}', '${parseClose}', '${parseLow}', '${timestamp}', '${parseLow}','${parseLow}','${parseLow}','${parseLow}','${parseLow}','${parseLow}')`
         const insert = await db.queryAsync(query)
         /*
