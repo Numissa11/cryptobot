@@ -22,24 +22,30 @@ connection.connect((err) => {
     console.log('database successfully connected')
 })
 
-// Tulip indicators console
+// Tulip indicators version
 console.log("Tulip Indicators version is:");
 console.log(tulind.version);
 
 
 // ***** C. O. D. E ****** //
 
+// Tulip Indicators expects the oldest data in the time series to be in index 0
 
-async function ooIfoundData() {
+async function reCalculate() {
     try {
+        let lastMACD = null
+        let beforeLastMACD = null
+        let macdBuy = false
+        let bbandBuy = false
 
-        const fetchedData = await fetch('https://www.bitstamp.net/api/v2/ohlc/btcusd?step=60&limit=10')
+        const step = 900
+        const limit = 32
+
+        const fetchedData = await fetch(`https://www.bitstamp.net/api/v2/ohlc/btcusd?step=${step}&limit=${limit}`)
 
         let data = await fetchedData.json()
 
         const ohclObject = data.data.ohlc
-
-        // Array of 26 just fetched
 
         const openArray = ohclObject.map((elem) => elem.open)
         const highArray = ohclObject.map((elem) => elem.high)
@@ -47,121 +53,65 @@ async function ooIfoundData() {
         const lowArray = ohclObject.map((elem) => elem.low)
         const timeArray = ohclObject.map((elem) => elem.timestamp)
 
-        console.log('open array', openArray, openArray.length);
+        console.log('*******************************************************');
 
-        // Tulind indicators calculations macd & bolinger
+        const currentdate = new Date(); 
+        const datetime = "Last Sync: " + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
 
-        const macd = await tulind.indicators.macd.indicator([openArray], [2, 5, 9])
+        // MACD:
+        // option_names: [ 'short period', 'long period', 'signal period' ]
+        // output_names: [ 'macd', 'macd_signal', 'macd_histogram' ]
 
-        console.log('macd', macd)
+        const macd = await tulind.indicators.macd.indicator([openArray], [10, 26, 9])
 
+        const openLast = parseFloat(openArray[openArray.length - 1])
+
+        if(openArray.length === limit){
+           lastMACD = macd[2][macd[2].length - 1]
+           beforeLastMACD = macd[2][macd[2].length - 2]
+           if(beforeLastMACD < lastMACD){ 
+               macdBuy = true} 
+        }
+
+        // BBANDS:
+        // option_names: [ 'period', 'stddev' ]
+        // output_names: [ 'bbands_lower', 'bbands_middle', 'bbands_upper' ]
 
         const bband = await tulind.indicators.bbands.indicator([openArray], [5, 2])
 
-        console.log('bband', bband)
+        const lastBband = bband[0][bband[0].length - 1]
+        if(lastBband > openLast){
+            bbandBuy = true
+        }
 
+        console.log('datetime', datetime)
+        console.log('openArray.length', openArray.length)
+        console.log('limit', limit)
+        console.log('candle minutes', step / 60)
+        console.log('macd output array shorter:', tulind.indicators.macd.start([10,26,9]));
+        console.log('bbands output array shorter:', tulind.indicators.bbands.start([5,2]));
 
-
-
-        // timestamp try inserting into DB
-
-        const timestamp = data.data.ohlc[0]['timestamp']
-        console.log("timestamp :", timestamp)
-
-        const typeoff = typeof timestamp
-
-        console.log('type', typeoff)
-
-        const parseTimestamp = parseFloat(timestamp)
-        console.log(parseTimestamp, typeof parseTimestamp)
-
-
-        // datas
-        const open = data.data.ohlc[0]['open']
-        console.log("open :", open)
-        const parseOpen = parseFloat(open)
-
-
-        const high = data.data.ohlc[0]['high']
-        console.log("high :", high)
-        const parseHigh = parseFloat(high)
-
-
-        const close = data.data.ohlc[0]['close']
-        console.log("close:", close)
-        const parseClose = parseFloat(close)
-
-
-        const low = data.data.ohlc[0]['low']
-        console.log("low :", low)
-        const parseLow = parseFloat(low)
-
-        console.log('parseLow', parseLow);
-
-        // INSERT fetched data into DB
-
-        //NOT Ready yet, need the indicators!
-        
-        const query = `INSERT INTO ohcl_macd_bband (open, high, close, low, timestamp, macd, macd_signal, macd_histogram, bband_lower, bband_middle, bband_upper) VALUES ('${parseOpen}', '${parseHigh}', '${parseClose}', '${parseLow}', '${timestamp}', '${parseLow}','${parseLow}','${parseLow}','${parseLow}','${parseLow}','${parseLow}')`
-        const insert = await db.queryAsync(query)
-        /*
-                // COUNT total id in the DB
-                const totalLineCount = await db.queryAsync('SELECT COUNT (*) FROM ohcl_macd_bband')
-        
-                const string = JSON.stringify(totalLineCount);
-                const json = JSON.parse(string);
-                const numberTotal = json[0]['COUNT (*)']
-                const numberReturned = numberTotal - 26;
-                const numberLimit = 26;
-        
-        
-                // SELECT last x number from Table
-                query2 = `SELECT * from ohcl_btc_usd limit ${numberReturned}, ${numberLimit}`
-        
-                const limit = await db.queryAsync(query2)
-        
-                const limitString = JSON.stringify(limit)
-                let ohclObject = JSON.parse(limitString)
-                freshData = ohclObject
-        
-                const openArray = ohclObject.map((elem) => elem.open)
-                const highArray = ohclObject.map((elem) => elem.high)
-                const closeArray = ohclObject.map((elem) => elem.close)
-                const lowArray = ohclObject.map((elem) => elem.low)
-                const timeArray = ohclObject.map((elem) => elem.timestamp)
-        
-         
-                // query3 = `SELECT * from settings where indicatior_name = 'macd'`
-        
-                // const indicatorSettings = await db.queryAsync(query3)
-        
-                const macd = await tulind.indicators.macd.indicator([openArray], [12, 26, 9])
-        
-                console.log('macd', macd)
-        */
-
+        console.log('openLast', openLast)
+        console.log('beforeLastMACD', beforeLastMACD)
+        console.log('lastMACD', lastMACD)
+        console.log('lastBband', lastBband)
+        console.log('macd buy', macdBuy)
+        console.log('bbands buy', bbandBuy)
+        console.log('BUY NOW -->', macdBuy && bbandBuy)
+        console.log('SELL AT:', openLast * 1.03)
     } catch (error) {
         console.log(error);
     }
 }
 
-
-// all indicators are console.log
-
-// console.log('indicators', tulind.indicators);
-
-/*
-app.get('/tradingData', (req, res) => {
-
-    res.json(freshData)
-})
-*/
-
 cron.schedule('*/1 * * * *', async () => {
-    await ooIfoundData()
+    await reCalculate()
     console.log('running a task every minute');
 });
-
-
 
 app.listen(port, () => console.log(`Listening on port ${port}...`))
