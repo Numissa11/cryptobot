@@ -7,7 +7,7 @@ module.exports = {
     port: '3307',
     database: 'cryptodb',
     user:     'user',
-    password: 'matu2010'
+    password: 'motDePasseHabituelEnMinuscule'
   },
   migrations: {
     tableName: 'migrations',
